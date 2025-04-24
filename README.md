@@ -31,8 +31,13 @@ This is one of the implementation of the following [paper](https://aclanthology.
 # Installing
 Confirmed that it works on python3.11.0.
 ```sh
-pip install git+https://github.com/gotutiyan/gector
-# Donwload the verb dictionary in advance
+git clone https://github.com/gotutiyan/gector
+cd gector
+uv pip install .
+```
+
+## Download the verb dictionary in advance
+```
 mkdir data
 cd data
 wget https://github.com/grammarly/gector/raw/master/data/verb-form-vocab.txt
@@ -61,11 +66,14 @@ gector-predict \
 
 #### API
 ```py
+import torch
 from transformers import AutoTokenizer
 from gector import GECToR, predict, load_verb_dict
 
 model_id = 'gotutiyan/gector-roberta-base-5k'
 model = GECToR.from_pretrained(model_id)
+if torch.cuda.is_available():
+    model = model.to("cuda")
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 encode, decode = load_verb_dict('data/verb-form-vocab.txt')
 srcs = [
